@@ -1,14 +1,14 @@
-public class Process implements Runnable {
+public class Process<T> implements Runnable {
 
     private int n;
-    private int data;
+    private T data;
     private int roundNumber;
     private int processNumber;
-    private Message[][] messages = new Message[2][2];
+    private Message<T>[][] messages = new Message[2][2];
 
-    private OnProcessRun onProcessRun;
+    private OnProcessRun<T> onProcessRun;
 
-    public Process(int data, int processNumber, int n, Message[][] messages, OnProcessRun onProcessRun) {
+    public Process(T data, int processNumber, int n, Message<T>[][] messages, OnProcessRun<T> onProcessRun) {
 
         this.n = n;
         this.data = data;
@@ -33,11 +33,11 @@ public class Process implements Runnable {
         onProcessRun.run(data, processNumber, roundNumber, n, messages);
     }
 
-    public interface OnProcessRun {
-        void run(int data, int processNumber, int roundNumber, int n, Message[][] messages);
+    public T getData() {
+        return data;
     }
 
-    public int getData() {
-        return data;
+    public interface OnProcessRun<T> {
+        void run(T data, int processNumber, int roundNumber, int n, Message<T>[][] messages);
     }
 }

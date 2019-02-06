@@ -4,7 +4,7 @@ public class OddEven {
 
     public static void main(String[] args) {
 
-        Process.OnProcessRun onProcessRun = (data, processNumber, roundNumber, n, messages) -> {
+        Process.OnProcessRun<Integer> onProcessRun = (data, processNumber, roundNumber, n, messages) -> {
 
             while (roundNumber <= n) {
 
@@ -17,11 +17,12 @@ public class OddEven {
 
                         messages[1][0].send(processNumber, data, roundNumber);
                         data = messages[1][1].receive(processNumber, roundNumber);
+
                     }
                 } else {
                     if (messages[0][0] != null) {
 
-                        int newData = messages[0][0].receive(processNumber, roundNumber);
+                        Integer newData = messages[0][0].receive(processNumber, roundNumber);
                         if (newData > data) {
                             int oldData = data;
                             data = newData;
@@ -39,17 +40,18 @@ public class OddEven {
             System.out.printf("P%d,  Round -> %d, Value -> %d\n", processNumber, roundNumber - 1, data);
         };
 
-        Message.OnMessage onMessage = new Message.OnMessage() {
+        Message.OnMessage<Integer> onMessage = new Message.OnMessage<Integer>() {
             @Override
-            public void onSend(int processNumber, int data, int roundNumber) {
+            public void onSend(int processNumber, Integer data, int roundNumber) {
                 // System.out.printf("Process P%d has sent %d in round %d\n", processNumber, data, roundNumber);
             }
 
             @Override
-            public void onReceive(int processNumber, int data, int roundNumber) {
+            public void onReceive(int processNumber, Integer data, int roundNumber) {
                 // System.out.printf("Process P%d has received %d in round %d\n", processNumber, data, roundNumber);
             }
         };
+
 
         int n = 5;
         try {
@@ -58,21 +60,21 @@ public class OddEven {
             // pass
         }
 
-        Message[][] messages = new Message[2][2];
-        messages[1][0] = new Message(onMessage);
-        messages[1][1] = new Message(onMessage);
+        Message<Integer>[][] messages = new Message[2][2];
+        messages[1][0] = new Message<>(onMessage);
+        messages[1][1] = new Message<>(onMessage);
 
-        Process[] processes = new Process[n];
+        Process<Integer>[] processes = new Process[n];
         for (int i = 1; i <= n; i++) {
 
-            processes[i - 1] = new Process(new Random().nextInt(n*100), i, n, messages, onProcessRun);
+            processes[i - 1] = new Process<>(new Random().nextInt(n * 100), i, n, messages, onProcessRun);
 
             if (i < n) {
                 messages[0][0] = messages[1][0];
                 messages[0][1] = messages[1][1];
                 if (i < n - 1) {
-                    messages[1][0] = new Message(onMessage);
-                    messages[1][1] = new Message(onMessage);
+                    messages[1][0] = new Message<>(onMessage);
+                    messages[1][1] = new Message<>(onMessage);
                 } else {
                     messages[1][0] = null;
                     messages[1][1] = null;
@@ -81,8 +83,8 @@ public class OddEven {
         }
 
         System.out.print("Initial Sequence -> ");
-        for (Process process : processes) {
-            System.out.printf("%d ", process.getData());
+        for (Process<Integer> process1 : processes) {
+            System.out.printf("%d ", process1.getData());
         }
         System.out.println();
 

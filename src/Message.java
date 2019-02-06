@@ -1,15 +1,15 @@
-public class Message {
+public class Message<T> {
 
-    private int data = -1;
+    private T data;
     private boolean flag = false;
 
-    private OnMessage onMessage;
+    private OnMessage<T> onMessage;
 
-    public Message(OnMessage onMessage) {
+    public Message(OnMessage<T> onMessage) {
         this.onMessage = onMessage;
     }
 
-    public synchronized void send(int processNumber, int data, int roundNumber) {
+    public synchronized void send(int processNumber, T data, int roundNumber) {
 
         if (flag) {
             try {
@@ -26,7 +26,7 @@ public class Message {
         notify();
     }
 
-    public synchronized int receive(int processNumber, int roundNumber) {
+    public synchronized T receive(int processNumber, int roundNumber) {
 
         if (!flag) {
             try {
@@ -44,10 +44,10 @@ public class Message {
         return data;
     }
 
-    public interface OnMessage {
+    public interface OnMessage<T> {
 
-        void onSend(int processNumber, int data, int roundNumber);
+        void onSend(int processNumber, T data, int roundNumber);
 
-        void onReceive(int processNumber, int data, int roundNumber);
+        void onReceive(int processNumber, T data, int roundNumber);
     }
 }
