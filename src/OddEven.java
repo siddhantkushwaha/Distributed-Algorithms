@@ -1,3 +1,5 @@
+import java.util.Random;
+
 public class OddEven {
 
     public static void main(String[] args) {
@@ -63,7 +65,7 @@ public class OddEven {
         Process[] processes = new Process[n];
         for (int i = 1; i <= n; i++) {
 
-            processes[i - 1] = new Process(n - i + 1, i, n, messages, onProcessRun);
+            processes[i - 1] = new Process(new Random().nextInt(n*100), i, n, messages, onProcessRun);
 
             if (i < n) {
                 messages[0][0] = messages[1][0];
