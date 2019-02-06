@@ -1,3 +1,5 @@
+package com.siddhantkushwaha.dc;
+
 public class Message<T> {
 
     private T data;
