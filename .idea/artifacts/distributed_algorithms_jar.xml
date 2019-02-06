@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="distributed_algorithms:jar">
+    <output-path>$PROJECT_DIR$/</output-path>
+    <root id="archive" name="distributed_algorithms.jar">
+      <element id="module-output" name="distributed_algorithms" />
+    </root>
+  </artifact>
+</component>
