@@ -3,6 +3,8 @@ package com.siddhantkushwaha.dc.oddeven;
 import com.siddhantkushwaha.dc.Channel;
 import com.siddhantkushwaha.dc.Comparator;
 
+import java.util.Arrays;
+
 public class OddEven {
 
     public static void main(String[] args) {
@@ -28,34 +30,19 @@ public class OddEven {
             // pass
         }
 
-        Channel<Integer>[][] channels = new Channel[2][2];
-        channels[1][0] = new Channel<>(onMessage);
-        channels[1][1] = new Channel<>(onMessage);
+        Channel<Integer>[] channels = new Channel[4 * (n - 2)];
+        for (int i = 2; i <= channels.length - 3; i++)
+            channels[i] = new Channel<>(onMessage);
 
         System<Integer>[] systems = new System[n];
-        for (int i = 1; i <= n; i++) {
+        for (int i = 1, k = 0; i <= n; i++, k += 2) {
 
             // int data = new Random().nextInt(n * 100);
             int data = n - i + 1;
 
-            Channel<Integer>[][] _channels = new Channel[2][2];
-            _channels[0][0] = channels[0][0];
-            _channels[0][1] = channels[0][1];
-            _channels[1][0] = channels[1][0];
-            _channels[1][1] = channels[1][1];
+            Channel<Integer>[] _channels = Arrays.copyOfRange(channels, k, k + 4);
+            java.lang.System.out.println(_channels.length);
             systems[i - 1] = new System<>(data, i, n, _channels, comparator);
-
-            if (i < n) {
-                channels[0][0] = channels[1][0];
-                channels[0][1] = channels[1][1];
-                if (i < n - 1) {
-                    channels[1][0] = new Channel<>(onMessage);
-                    channels[1][1] = new Channel<>(onMessage);
-                } else {
-                    channels[1][0] = null;
-                    channels[1][1] = null;
-                }
-            }
         }
 
         for (System<Integer> system : systems) {

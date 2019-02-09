@@ -11,11 +11,11 @@ public class System<T> implements Runnable {
     private int processNumber;
     private Data<T> data1;
     private Data<T> data2;
-    private Channel<Data<T>>[][] channels;
+    private Channel<Data<T>>[] channels;
 
     private Comparator<T> comparator;
 
-    System(T data, int mark, int processNumber, int n, Channel<Data<T>>[][] channels, Comparator<T> comparator) {
+    System(T data, int mark, int processNumber, int n, Channel<Data<T>>[] channels, Comparator<T> comparator) {
 
         this.n = n;
 
@@ -59,7 +59,7 @@ public class System<T> implements Runnable {
             if (data1 != null) {
                 t1 = new Thread(() -> {
 
-                    Data<T> newData = channels[0][0].receive(processNumber, roundNumber);
+                    Data<T> newData = channels[0].receive(processNumber, roundNumber);
 
                     if (comparator.compare(data1.data, newData.data)) {
                         Data<T> oldData = data1;
@@ -70,9 +70,9 @@ public class System<T> implements Runnable {
                         if (oldData.marked)
                             area++;
 
-                        channels[0][1].send(processNumber, oldData, roundNumber);
+                        channels[1].send(processNumber, oldData, roundNumber);
                     } else {
-                        channels[0][1].send(processNumber, newData, roundNumber);
+                        channels[1].send(processNumber, newData, roundNumber);
                     }
 
                 }, "P" + processNumber + "-1");
@@ -82,8 +82,8 @@ public class System<T> implements Runnable {
             if (data2 != null) {
                 t2 = new Thread(() -> {
 
-                    channels[1][0].send(processNumber, data2, roundNumber);
-                    data2 = channels[1][1].receive(processNumber, roundNumber);
+                    channels[2].send(processNumber, data2, roundNumber);
+                    data2 = channels[3].receive(processNumber, roundNumber);
 
                 }, "P" + processNumber + "-2");
                 t2.start();

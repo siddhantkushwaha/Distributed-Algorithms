@@ -9,11 +9,11 @@ public class System<T> implements Runnable {
     private T data;
     private int roundNumber;
     private int processNumber;
-    private Channel<T>[][] channels;
+    private Channel<T>[] channels;
 
     private Comparator<T> comparator;
 
-    System(T data, int processNumber, int n, Channel<T>[][] channels, Comparator<T> comparator) {
+    System(T data, int processNumber, int n, Channel<T>[] channels, Comparator<T> comparator) {
 
         this.n = n;
         this.data = data;
@@ -40,21 +40,21 @@ public class System<T> implements Runnable {
             val = val | ((processNumber & 1) << 1);
 
             if (val == 0 || val == 3) {
-                if (channels[1][0] != null) {
+                if (channels[2] != null) {
 
-                    channels[1][0].send(processNumber, data, roundNumber);
-                    data = channels[1][1].receive(processNumber, roundNumber);
+                    channels[2].send(processNumber, data, roundNumber);
+                    data = channels[3].receive(processNumber, roundNumber);
                 }
             } else {
-                if (channels[0][0] != null) {
+                if (channels[0] != null) {
 
-                    T newData = channels[0][0].receive(processNumber, roundNumber);
+                    T newData = channels[0].receive(processNumber, roundNumber);
                     if (comparator.compare(data, newData)) {
                         T oldData = data;
                         data = newData;
-                        channels[0][1].send(processNumber, oldData, roundNumber);
+                        channels[1].send(processNumber, oldData, roundNumber);
                     } else
-                        channels[0][1].send(processNumber, newData, roundNumber);
+                        channels[1].send(processNumber, newData, roundNumber);
                 }
             }
 

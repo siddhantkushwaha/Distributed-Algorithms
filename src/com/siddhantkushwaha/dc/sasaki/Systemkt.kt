@@ -3,7 +3,7 @@ package com.siddhantkushwaha.dc.sasaki
 import com.siddhantkushwaha.dc.Channel
 import com.siddhantkushwaha.dc.Comparator
 
-class Systemkt<T>(data: T, mark: Int, private val processNumber: Int, private val n: Int, private val channels: Array<Array<Channel<Data<T>?>?>>, private val comparator: Comparator<T>) : Runnable {
+class Systemkt<T>(data: T, mark: Int, private val processNumber: Int, private val n: Int, private val channels: Array<Channel<Data<T>?>?>, private val comparator: Comparator<T>) : Runnable {
 
     private var data1: Data<T>? = null
     private var data2: Data<T>? = null
@@ -50,7 +50,7 @@ class Systemkt<T>(data: T, mark: Int, private val processNumber: Int, private va
             if (data1 != null) {
                 t1 = Thread(Runnable {
 
-                    val newData = channels[0][0]!!.receive(processNumber, roundNumber)
+                    val newData = channels[0]!!.receive(processNumber, roundNumber)
                     if (comparator.compare(data1!!.data, newData!!.data)) {
 
                         val oldData = data1
@@ -62,9 +62,9 @@ class Systemkt<T>(data: T, mark: Int, private val processNumber: Int, private va
                         if (oldData!!.marked)
                             area++
 
-                        channels[0][1]!!.send(processNumber, oldData, roundNumber)
+                        channels[1]!!.send(processNumber, oldData, roundNumber)
                     } else
-                        channels[0][1]!!.send(processNumber, newData, roundNumber)
+                        channels[1]!!.send(processNumber, newData, roundNumber)
 
                 }, "P$processNumber-1")
                 t1.start()
@@ -73,8 +73,8 @@ class Systemkt<T>(data: T, mark: Int, private val processNumber: Int, private va
             if (data2 != null) {
                 t2 = Thread(Runnable {
 
-                    channels[1][0]!!.send(processNumber, data2, roundNumber)
-                    data2 = channels[1][1]!!.receive(processNumber, roundNumber)
+                    channels[2]!!.send(processNumber, data2, roundNumber)
+                    data2 = channels[3]!!.receive(processNumber, roundNumber)
 
                 }, "P$processNumber-2")
                 t2.start()
