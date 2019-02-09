@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: com.siddhantkushwaha.dc.oddeven.OddEven
+Main-Class: com.siddhantkushwaha.dc.sasaki.Sasaki
 

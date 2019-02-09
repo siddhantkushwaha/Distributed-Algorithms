@@ -1,8 +1,13 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="distributed_algorithms:jar">
     <output-path>$PROJECT_DIR$/</output-path>
-    <root id="archive" name="distributed_algorithms.jar">
+    <root id="archive" name="DistributedAlgorithms.jar">
       <element id="module-output" name="distributed_algorithms" />
+      <element id="extracted-dir" path="$KOTLIN_BUNDLED$/lib/kotlin-stdlib.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$KOTLIN_BUNDLED$/lib/kotlin-reflect.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$KOTLIN_BUNDLED$/lib/kotlin-test.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$KOTLIN_BUNDLED$/lib/kotlin-stdlib-jdk7.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$KOTLIN_BUNDLED$/lib/kotlin-stdlib-jdk8.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
