@@ -14,12 +14,12 @@ public class OddEven {
         Channel.OnMessage<Integer> onMessage = new Channel.OnMessage<Integer>() {
             @Override
             public void onSend(int processNumber, Integer data, int roundNumber) {
-                // System.out.printf("System P%d has sent %d in round %d\n", processNumber, data, roundNumber);
+                 // System.out.printf("Process P%d has sent %d in round %d\n", processNumber, data, roundNumber);
             }
 
             @Override
             public void onReceive(int processNumber, Integer data, int roundNumber) {
-                // System.out.printf("System P%d has received %d in round %d\n", processNumber, data, roundNumber);
+                // System.out.printf("Process P%d has received %d in round %d\n", processNumber, data, roundNumber);
             }
         };
 
@@ -34,22 +34,21 @@ public class OddEven {
         for (int i = 2; i <= channels.length - 3; i++)
             channels[i] = new Channel<>(onMessage);
 
-        System[] systems = new System[n];
+        Process[] processes = new Process[n];
         for (int i = 1, k = 0; i <= n; i++, k += 2) {
 
             // int data = new Random().nextInt(n * 100);
             int data = n - i + 1;
 
             Channel[] _channels = Arrays.copyOfRange(channels, k, k + 4);
-            systems[i - 1] = new System<Integer>(data, i, n, _channels, comparator);
+            processes[i - 1] = new Process<Integer>(data, i, n, _channels, comparator);
         }
 
-        for (System system : systems) {
-            java.lang.System.out.printf("%d ", (Integer) system.getData());
-        }
-        java.lang.System.out.println();
+        for (Process process : processes)
+            System.out.printf("%d ", (Integer) process.getData());
+        System.out.println();
 
-        for (System system : systems)
-            system.start();
+        for (Process process : processes)
+            process.start();
     }
 }

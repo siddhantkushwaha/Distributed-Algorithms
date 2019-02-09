@@ -3,7 +3,7 @@ package com.siddhantkushwaha.dc.sasaki
 import com.siddhantkushwaha.dc.Channel
 import com.siddhantkushwaha.dc.Comparator
 
-class Systemkt<T>(data: T, mark: Int, private val processNumber: Int, private val n: Int, private val channels: Array<Channel<Data<T>?>?>, private val comparator: Comparator<T>) : Runnable {
+class Process<T>(data: T, mark: Int, private val processNumber: Int, private val n: Int, private val channels: Array<Channel<Data<T>?>?>, private val comparator: Comparator<T>) : Runnable {
 
     private var data1: Data<T>? = null
     private var data2: Data<T>? = null
@@ -37,7 +37,7 @@ class Systemkt<T>(data: T, mark: Int, private val processNumber: Int, private va
     }
 
     fun start() {
-        Thread(this@Systemkt, "P$processNumber").start()
+        Thread(this@Process, "P$processNumber").start()
     }
 
     override fun run() {

@@ -3,7 +3,7 @@ package com.siddhantkushwaha.dc.oddeven;
 import com.siddhantkushwaha.dc.Channel;
 import com.siddhantkushwaha.dc.Comparator;
 
-public class System<T> implements Runnable {
+public class Process<T> implements Runnable {
 
     private int n;
     private T data;
@@ -13,7 +13,7 @@ public class System<T> implements Runnable {
 
     private Comparator<T> comparator;
 
-    System(T data, int processNumber, int n, Channel<T>[] channels, Comparator<T> comparator) {
+    Process(T data, int processNumber, int n, Channel<T>[] channels, Comparator<T> comparator) {
 
         this.n = n;
         this.data = data;
@@ -54,14 +54,13 @@ public class System<T> implements Runnable {
                         data = newData;
                         channels[1].send(processNumber, oldData, roundNumber);
                     } else
-                        channels[1].send(processNumber, newData, roundNumber);
-                }
+                        channels[1].send(processNumber, newData, roundNumber); }
             }
 
             roundNumber++;
         }
 
-        java.lang.System.out.println("Completed, System " + processNumber + ", Data -> " + data + ", Round Number -> " + (roundNumber - 1));
+        System.out.println("Completed, Process " + processNumber + ", Data -> " + data + ", Round Number -> " + (roundNumber - 1));
     }
 
     T getData() {

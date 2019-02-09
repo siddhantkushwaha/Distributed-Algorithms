@@ -34,7 +34,7 @@ public class Sasaki {
         for (int i = 2; i <= channels.length - 3; i++)
             channels[i] = new Channel<>(onMessage);
 
-        System[] systems = new System[n];
+        Process[] processes = new Process[n];
         for (int i = 1, k = 0; i <= n; i++, k += 2) {
 
             // int data = new Random().nextInt(n * 100);
@@ -47,10 +47,11 @@ public class Sasaki {
                 mark = 1;
 
             Channel[] _channels = Arrays.copyOfRange(channels, k, k + 4);
-            systems[i - 1] = new System<Integer>(data, mark, i, n, _channels, comparator);
+            processes[i - 1] = new Process<Integer>(data, mark, i, n, _channels, comparator);
         }
 
-        for (System system : systems)
-            system.start();
+        for (Process process : processes) {
+            process.start();
+        }
     }
 }
