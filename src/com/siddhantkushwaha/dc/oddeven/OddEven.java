@@ -30,23 +30,22 @@ public class OddEven {
             // pass
         }
 
-        Channel<Integer>[] channels = new Channel[4 * (n - 2)];
+        Channel[] channels = new Channel[4 * (n - 2)];
         for (int i = 2; i <= channels.length - 3; i++)
             channels[i] = new Channel<>(onMessage);
 
-        System<Integer>[] systems = new System[n];
+        System[] systems = new System[n];
         for (int i = 1, k = 0; i <= n; i++, k += 2) {
 
             // int data = new Random().nextInt(n * 100);
             int data = n - i + 1;
 
-            Channel<Integer>[] _channels = Arrays.copyOfRange(channels, k, k + 4);
-            java.lang.System.out.println(_channels.length);
-            systems[i - 1] = new System<>(data, i, n, _channels, comparator);
+            Channel[] _channels = Arrays.copyOfRange(channels, k, k + 4);
+            systems[i - 1] = new System<Integer>(data, i, n, _channels, comparator);
         }
 
-        for (System<Integer> system : systems) {
-            java.lang.System.out.printf("%d ", system.getData());
+        for (System system : systems) {
+            java.lang.System.out.printf("%d ", (Integer) system.getData());
         }
         java.lang.System.out.println();
 

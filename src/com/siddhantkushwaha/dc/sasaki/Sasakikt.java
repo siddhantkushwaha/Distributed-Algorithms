@@ -30,11 +30,11 @@ public class Sasakikt {
             // pass
         }
 
-        Channel<Data<Integer>>[] channels = new Channel[4 * (n - 2)];
+        Channel[] channels = new Channel[4 * (n - 2)];
         for (int i = 2; i <= channels.length - 3; i++)
             channels[i] = new Channel<>(onMessage);
 
-        Systemkt<Integer>[] systemkts = new Systemkt[n];
+        Systemkt[] systemkts = new Systemkt[n];
         for (int i = 1, k = 0; i <= n; i++, k += 2) {
 
             // int data = new Random().nextInt(n * 100);
@@ -46,8 +46,8 @@ public class Sasakikt {
             else if (i == n)
                 mark = 1;
 
-            Channel<Data<Integer>>[] _channels = Arrays.copyOfRange(channels, k, k + 4);
-            systemkts[i - 1] = new Systemkt<>(data, mark, i, n, _channels, comparator);
+            Channel[] _channels = Arrays.copyOfRange(channels, k, k + 4);
+            systemkts[i - 1] = new Systemkt<Integer>(data, mark, i, n, _channels, comparator);
         }
 
         for (Systemkt systemkt : systemkts) {

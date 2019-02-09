@@ -30,11 +30,11 @@ public class Sasaki {
             // pass
         }
 
-        Channel<Data<Integer>>[] channels = new Channel[4 * (n - 2)];
+        Channel[] channels = new Channel[4 * (n - 2)];
         for (int i = 2; i <= channels.length - 3; i++)
             channels[i] = new Channel<>(onMessage);
 
-        System<Integer>[] systems = new System[n];
+        System[] systems = new System[n];
         for (int i = 1, k = 0; i <= n; i++, k += 2) {
 
             // int data = new Random().nextInt(n * 100);
@@ -46,8 +46,8 @@ public class Sasaki {
             else if (i == n)
                 mark = 1;
 
-            Channel<Data<Integer>>[] _channels = Arrays.copyOfRange(channels, k, k+4);
-            systems[i - 1] = new System(data, mark, i, n, _channels, comparator);
+            Channel[] _channels = Arrays.copyOfRange(channels, k, k + 4);
+            systems[i - 1] = new System<Integer>(data, mark, i, n, _channels, comparator);
         }
 
         for (System system : systems)
