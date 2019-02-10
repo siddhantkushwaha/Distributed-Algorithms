@@ -23,14 +23,14 @@ public class Sasaki {
             }
         };
 
-        int n = 8;
+        int n = 500;
         try {
             n = Integer.parseInt(args[0]);
         } catch (Exception e) {
             // pass
         }
 
-        Channel[] channels = new Channel[4 * (n - 2)];
+        Channel[] channels = new Channel[2 * (n + 1)];
         for (int i = 2; i <= channels.length - 3; i++)
             channels[i] = new Channel<>(onMessage);
 

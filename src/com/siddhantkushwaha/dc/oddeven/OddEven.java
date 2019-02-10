@@ -14,7 +14,7 @@ public class OddEven {
         Channel.OnMessage<Integer> onMessage = new Channel.OnMessage<Integer>() {
             @Override
             public void onSend(int processNumber, Integer data, int roundNumber) {
-                 // System.out.printf("Process P%d has sent %d in round %d\n", processNumber, data, roundNumber);
+                // System.out.printf("Process P%d has sent %d in round %d\n", processNumber, data, roundNumber);
             }
 
             @Override
@@ -30,7 +30,7 @@ public class OddEven {
             // pass
         }
 
-        Channel[] channels = new Channel[4 * (n - 2)];
+        Channel[] channels = new Channel[2 * (n + 1)];
         for (int i = 2; i <= channels.length - 3; i++)
             channels[i] = new Channel<>(onMessage);
 
