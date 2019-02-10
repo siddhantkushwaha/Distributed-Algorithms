@@ -5,12 +5,11 @@ import com.siddhantkushwaha.dc.Comparator
 
 class Process<T>(private var data: T, private val processNumber: Int, private val n: Int, private val channels: Array<Channel<T?>?>, private val comparator: Comparator<T>) : Runnable {
 
-    var idx = processNumber;
 
-    val leftReceiveChannel = channels[0]
-    val leftSendChannel = channels[1]
-    val rightSendChannel = channels[2]
-    val rightReceiveChannel = channels[3]
+    private val leftReceiveChannel = channels[0]
+    private val leftSendChannel = channels[1]
+    private val rightSendChannel = channels[2]
+    private val rightReceiveChannel = channels[3]
 
 
     fun start() {
@@ -19,8 +18,8 @@ class Process<T>(private var data: T, private val processNumber: Int, private va
 
     override fun run() {
 
+        var idx = processNumber
         for (roundNumber in 1 until n) {
-
             idx %= 3
             when (idx) {
 
@@ -108,8 +107,7 @@ class Process<T>(private var data: T, private val processNumber: Int, private va
 
                 else -> throw RuntimeException("idx error")
             }
-
-            idx++
+            idx += 2
         }
 
         println("Process-$processNumber -> $data")

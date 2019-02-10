@@ -23,7 +23,7 @@ public class Modulo3 {
             }
         };
 
-        int n = 500;
+        int n = 16;
         try {
             n = Integer.parseInt(args[0]);
         } catch (Exception e) {
