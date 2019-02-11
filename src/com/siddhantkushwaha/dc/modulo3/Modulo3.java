@@ -5,36 +5,52 @@ import com.siddhantkushwaha.dc.Comparator;
 import com.siddhantkushwaha.dc.ProcessOutput;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class Modulo3 {
 
-    public static void modulo3(int[] arr, boolean order, boolean printSendReceiveMessages) {
+    public static void modulo3(int[] arr, boolean order, boolean printEachRoundResult, boolean printSendReceiveMessages) {
         Comparator<Integer> comparator = (data1, data2) -> order ^ (data1 < data2);
 
         Channel.OnMessage<Integer> onMessage = new Channel.OnMessage<Integer>() {
             @Override
             public void onSend(int sourceProcess, int destinationProcess, Integer data, int roundNumber) {
+
                 if (printSendReceiveMessages)
-                    System.out.println("");
+                    System.out.printf("P%d sent %d to P%d in round %d\n", sourceProcess, data, destinationProcess, roundNumber);
             }
 
             @Override
             public void onReceive(int sourceProcess, int destinationProcess, Integer data, int roundNumber) {
+
                 if (printSendReceiveMessages)
-                    System.out.println("");
+                    System.out.printf("P%d received %d from P%d in round %d\n", sourceProcess, data, destinationProcess, roundNumber);
             }
         };
 
+        HashMap<Integer, Integer> fin = new HashMap<>();
         ProcessOutput<Integer> processOutput = new ProcessOutput<Integer>() {
             @Override
             public void onRoundComplete(int processNumber, Integer leftData, Integer rightData, int area, int roundNumber) {
 
+                if (printEachRoundResult)
+                    System.out.printf("P%d, Round - %d, data -> %d\n", processNumber, roundNumber, leftData);
             }
 
             @Override
             public void onFinish(int processNumber, Integer leftData, Integer rightData, int area, int roundNumber) {
 
-                System.out.printf("Process P%d finished -> %d in round %d", processNumber, leftData, roundNumber);
+                System.out.printf("Finished P%d, Round - %d, data -> %d\n", processNumber, roundNumber, leftData);
+
+                fin.put(processNumber, leftData);
+
+                if (fin.size() == arr.length) {
+                    System.out.println("\nFinal Output ->");
+                    for (int i = 1; i <= arr.length; i++) {
+                        System.out.printf("%d ", fin.get(i));
+                    }
+                    System.out.println();
+                }
             }
         };
 
@@ -50,6 +66,7 @@ public class Modulo3 {
             processes[i] = new Process<Integer>(arr[i], i + 1, n, _channels, comparator, processOutput);
         }
 
+        System.out.println("Starting..");
         for (Process process : processes)
             process.start();
     }

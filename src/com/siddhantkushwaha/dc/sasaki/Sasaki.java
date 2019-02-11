@@ -5,10 +5,11 @@ import com.siddhantkushwaha.dc.Comparator;
 import com.siddhantkushwaha.dc.ProcessOutput;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class Sasaki {
 
-    public static void sasaki(int[] arr, boolean order, boolean printSendReceiveMessages) {
+    public static void sasaki(int[] arr, boolean order, boolean printEachRoundResult, boolean printSendReceiveMessages) {
 
         Comparator<Integer> comparator = (data1, data2) -> order ^ (data1 < data2);
 
@@ -17,26 +18,43 @@ public class Sasaki {
             public void onSend(int sourceProcess, int destinationProcess, Data<Integer> data, int roundNumber) {
 
                 if (printSendReceiveMessages)
-                    System.out.println("");
+                    System.out.printf("P%d sent %d to P%d in round %d\n", sourceProcess, data.data, destinationProcess, roundNumber);
             }
 
             @Override
             public void onReceive(int sourceProcess, int destinationProcess, Data<Integer> data, int roundNumber) {
+
                 if (printSendReceiveMessages)
-                    System.out.println("");
+                    System.out.printf("P%d received %d from P%d in round %d\n", sourceProcess, data.data, destinationProcess, roundNumber);
             }
         };
 
+        HashMap<Integer, Integer> fin = new HashMap<>();
         ProcessOutput<Integer> processOutput = new ProcessOutput<Integer>() {
             @Override
             public void onRoundComplete(int processNumber, Integer leftData, Integer rightData, int area, int roundNumber) {
 
+                if (printEachRoundResult)
+                    System.out.printf("P%d, Round - %d, data -> %d %d, area -> %d\n", processNumber, roundNumber, leftData, rightData, area);
             }
 
             @Override
             public void onFinish(int processNumber, Integer leftData, Integer rightData, int area, int roundNumber) {
 
-                System.out.printf("Process P%d finished -> %d %d, area - %d, in round %d\n", processNumber, leftData, rightData, area, roundNumber);
+                System.out.printf("Finished P%d, Round - %d, data -> %d %d, area - %d\n", processNumber, roundNumber, leftData, rightData, area);
+
+                if (leftData == null || area < 0)
+                    fin.put(processNumber, rightData);
+                else
+                    fin.put(processNumber, leftData);
+
+                if (fin.size() == arr.length) {
+                    System.out.println("\nFinal Output ->");
+                    for (int i = 1; i <= arr.length; i++) {
+                        System.out.printf("%d ", fin.get(i));
+                    }
+                    System.out.println();
+                }
             }
         };
 
@@ -59,6 +77,7 @@ public class Sasaki {
             processes[i] = new Process<Integer>(arr[i], mark, i + 1, n, _channels, comparator, processOutput);
         }
 
+        System.out.println("Starting..");
         for (Process process : processes) {
             process.start();
         }
