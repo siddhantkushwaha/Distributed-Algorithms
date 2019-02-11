@@ -2,8 +2,9 @@ package com.siddhantkushwaha.dc.sasaki
 
 import com.siddhantkushwaha.dc.Channel
 import com.siddhantkushwaha.dc.Comparator
+import com.siddhantkushwaha.dc.ProcessOutput
 
-class Process<T>(data: T, mark: Int, private val processNumber: Int, private val n: Int, private val channels: Array<Channel<Data<T>?>?>, private val comparator: Comparator<T>) : Runnable {
+class Process<T>(data: T, mark: Int, private val processNumber: Int, private val n: Int, private val channels: Array<Channel<Data<T>?>?>, private val comparator: Comparator<T>, private val processOutput: ProcessOutput<T>) : Runnable {
 
     private var data1: Data<T>? = null
     private var data2: Data<T>? = null
@@ -50,7 +51,7 @@ class Process<T>(data: T, mark: Int, private val processNumber: Int, private val
             if (data1 != null) {
                 t1 = Thread(Runnable {
 
-                    val newData = channels[0]!!.receive(processNumber, roundNumber)
+                    val newData = channels[0]!!.receive(processNumber, processNumber - 1, roundNumber)
                     if (comparator.compare(data1!!.data, newData!!.data)) {
 
                         val oldData = data1
@@ -62,9 +63,9 @@ class Process<T>(data: T, mark: Int, private val processNumber: Int, private val
                         if (oldData!!.marked)
                             area++
 
-                        channels[1]!!.send(processNumber, oldData, roundNumber)
+                        channels[1]!!.send(processNumber, processNumber - 1, oldData, roundNumber)
                     } else
-                        channels[1]!!.send(processNumber, newData, roundNumber)
+                        channels[1]!!.send(processNumber, processNumber - 1, newData, roundNumber)
 
                 }, "P$processNumber-1")
                 t1.start()
@@ -73,8 +74,8 @@ class Process<T>(data: T, mark: Int, private val processNumber: Int, private val
             if (data2 != null) {
                 t2 = Thread(Runnable {
 
-                    channels[2]!!.send(processNumber, data2, roundNumber)
-                    data2 = channels[3]!!.receive(processNumber, roundNumber)
+                    channels[2]!!.send(processNumber, processNumber + 1, data2, roundNumber)
+                    data2 = channels[3]!!.receive(processNumber, processNumber + 1, roundNumber)
 
                 }, "P$processNumber-2")
                 t2.start()
@@ -88,8 +89,10 @@ class Process<T>(data: T, mark: Int, private val processNumber: Int, private val
                 data1 = data2
                 data2 = temp
             }
+
+            processOutput.onRoundComplete(processNumber, data1?.data, data2?.data, area, roundNumber)
         }
 
-        println("Process-$processNumber -> ${data1?.data ?: "null"} ${data2?.data ?: "null"} --- $area")
+        processOutput.onFinish(processNumber, data1?.data, data2?.data, area, n - 1)
     }
 }

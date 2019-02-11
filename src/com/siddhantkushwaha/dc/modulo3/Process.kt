@@ -2,8 +2,9 @@ package com.siddhantkushwaha.dc.modulo3
 
 import com.siddhantkushwaha.dc.Channel
 import com.siddhantkushwaha.dc.Comparator
+import com.siddhantkushwaha.dc.ProcessOutput
 
-class Process<T>(private var data: T, private val processNumber: Int, private val n: Int, private val channels: Array<Channel<T?>?>, private val comparator: Comparator<T>) : Runnable {
+class Process<T>(private var data: T, private val processNumber: Int, private val n: Int, private val channels: Array<Channel<T?>?>, private val comparator: Comparator<T>, private val processOutput: ProcessOutput<T>) : Runnable {
 
 
     private val leftReceiveChannel = channels[0]
@@ -26,18 +27,18 @@ class Process<T>(private var data: T, private val processNumber: Int, private va
 
                 0 -> {
                     if (leftSendChannel != null)
-                        leftSendChannel.send(processNumber, data, roundNumber)
+                        leftSendChannel.send(processNumber, processNumber - 1, data, roundNumber)
 
                     if (leftReceiveChannel != null)
-                        data = leftReceiveChannel.receive(processNumber, roundNumber)!!
+                        data = leftReceiveChannel.receive(processNumber, processNumber - 1, roundNumber)!!
                 }
 
                 1 -> {
                     if (rightSendChannel != null)
-                        rightSendChannel.send(processNumber, data, roundNumber)
+                        rightSendChannel.send(processNumber, processNumber + 1, data, roundNumber)
 
                     if (rightReceiveChannel != null)
-                        data = rightReceiveChannel.receive(processNumber, roundNumber)!!
+                        data = rightReceiveChannel.receive(processNumber, processNumber + 1, roundNumber)!!
                 }
 
                 2 -> {
@@ -49,14 +50,14 @@ class Process<T>(private var data: T, private val processNumber: Int, private va
 
                     if (leftReceiveChannel != null) {
                         t1 = Thread(Runnable {
-                            dataArr.add(leftReceiveChannel.receive(processNumber, roundNumber)!!)
+                            dataArr.add(leftReceiveChannel.receive(processNumber, processNumber - 1, roundNumber)!!)
                         }, "P$processNumber-1")
                         t1.start()
                     }
 
                     if (rightReceiveChannel != null) {
                         t2 = Thread(Runnable {
-                            dataArr.add(rightReceiveChannel.receive(processNumber, roundNumber)!!)
+                            dataArr.add(rightReceiveChannel.receive(processNumber, processNumber + 1, roundNumber)!!)
                         }, "P$processNumber-2")
                         t2.start()
                     }
@@ -78,12 +79,12 @@ class Process<T>(private var data: T, private val processNumber: Int, private va
                             data = dataArr[1]!!
 
                             val t3 = Thread(Runnable {
-                                leftSendChannel.send(processNumber, dataArr[0]!!, roundNumber)
+                                leftSendChannel.send(processNumber, processNumber - 1, dataArr[0]!!, roundNumber)
                             }, "P$processNumber-3")
                             t3.start()
 
                             val t4 = Thread(Runnable {
-                                rightSendChannel.send(processNumber, dataArr[2]!!, roundNumber)
+                                rightSendChannel.send(processNumber, processNumber + 1, dataArr[2]!!, roundNumber)
                             }, "P$processNumber-4")
                             t4.start()
 
@@ -94,13 +95,13 @@ class Process<T>(private var data: T, private val processNumber: Int, private va
                         leftSendChannel != null -> {
 
                             data = dataArr[1]!!
-                            leftSendChannel.send(processNumber, dataArr[0]!!, roundNumber)
+                            leftSendChannel.send(processNumber, processNumber - 1, dataArr[0]!!, roundNumber)
                         }
 
                         rightSendChannel != null -> {
 
                             data = dataArr[0]!!
-                            rightSendChannel.send(processNumber, dataArr[1]!!, roundNumber)
+                            rightSendChannel.send(processNumber, processNumber + 1, dataArr[1]!!, roundNumber)
                         }
                     }
                 }
@@ -108,8 +109,11 @@ class Process<T>(private var data: T, private val processNumber: Int, private va
                 else -> throw RuntimeException("idx error")
             }
             idx += 2
+
+            processOutput.onRoundComplete(processNumber, data, data, 0, roundNumber)
         }
 
-        println("Process-$processNumber -> $data")
+        processOutput.onFinish(processNumber, data, data, 0, n - 1)
+        // println("Process-$processNumber -> $data")
     }
 }

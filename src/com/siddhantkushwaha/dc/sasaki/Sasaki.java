@@ -2,52 +2,61 @@ package com.siddhantkushwaha.dc.sasaki;
 
 import com.siddhantkushwaha.dc.Channel;
 import com.siddhantkushwaha.dc.Comparator;
+import com.siddhantkushwaha.dc.ProcessOutput;
 
 import java.util.Arrays;
 
 public class Sasaki {
 
-    public static void main(String[] args) {
+    public static void sasaki(int[] arr, boolean order, boolean printSendReceiveMessages) {
 
-        Comparator<Integer> comparator = (data1, data2) -> data1 < data2;
+        Comparator<Integer> comparator = (data1, data2) -> order ^ (data1 < data2);
 
         Channel.OnMessage<Data<Integer>> onMessage = new Channel.OnMessage<Data<Integer>>() {
             @Override
-            public void onSend(int processNumber, Data<Integer> data, int roundNumber) {
+            public void onSend(int sourceProcess, int destinationProcess, Data<Integer> data, int roundNumber) {
+
+                if (printSendReceiveMessages)
+                    System.out.println("");
+            }
+
+            @Override
+            public void onReceive(int sourceProcess, int destinationProcess, Data<Integer> data, int roundNumber) {
+                if (printSendReceiveMessages)
+                    System.out.println("");
+            }
+        };
+
+        ProcessOutput<Integer> processOutput = new ProcessOutput<Integer>() {
+            @Override
+            public void onRoundComplete(int processNumber, Integer leftData, Integer rightData, int area, int roundNumber) {
 
             }
 
             @Override
-            public void onReceive(int processNumber, Data<Integer> data, int roundNumber) {
+            public void onFinish(int processNumber, Integer leftData, Integer rightData, int area, int roundNumber) {
 
+                System.out.printf("Process P%d finished -> %d %d, area - %d, in round %d\n", processNumber, leftData, rightData, area, roundNumber);
             }
         };
 
-        int n = 500;
-        try {
-            n = Integer.parseInt(args[0]);
-        } catch (Exception e) {
-            // pass
-        }
+        int n = arr.length;
 
         Channel[] channels = new Channel[2 * (n + 1)];
         for (int i = 2; i <= channels.length - 3; i++)
             channels[i] = new Channel<>(onMessage);
 
         Process[] processes = new Process[n];
-        for (int i = 1, k = 0; i <= n; i++, k += 2) {
-
-            // int data = new Random().nextInt(n * 100);
-            int data = n - i + 1;
+        for (int i = 0, k = 0; i < n; i++, k += 2) {
 
             int mark = 0;
-            if (i == 1)
+            if (i == 0)
                 mark = -1;
-            else if (i == n)
+            else if (i == n - 1)
                 mark = 1;
 
             Channel[] _channels = Arrays.copyOfRange(channels, k, k + 4);
-            processes[i - 1] = new Process<Integer>(data, mark, i, n, _channels, comparator);
+            processes[i] = new Process<Integer>(arr[i], mark, i + 1, n, _channels, comparator, processOutput);
         }
 
         for (Process process : processes) {

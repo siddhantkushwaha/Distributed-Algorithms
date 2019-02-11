@@ -11,7 +11,7 @@ public class Channel<T> {
         this.onMessage = onMessage;
     }
 
-    public synchronized void send(int processNumber, T data, int roundNumber) {
+    public synchronized void send(int sourceProcess, int destinationProcess, T data, int roundNumber) {
 
         if (flag) {
             try {
@@ -21,14 +21,14 @@ public class Channel<T> {
             }
         }
 
-        onMessage.onSend(processNumber, data, roundNumber);
+        onMessage.onSend(sourceProcess, destinationProcess, data, roundNumber);
 
         this.data = data;
         flag = true;
         notify();
     }
 
-    public synchronized T receive(int processNumber, int roundNumber) {
+    public synchronized T receive(int sourceProcess, int destinationProcess, int roundNumber) {
 
         if (!flag) {
             try {
@@ -38,7 +38,7 @@ public class Channel<T> {
             }
         }
 
-        onMessage.onReceive(processNumber, data, roundNumber);
+        onMessage.onReceive(sourceProcess, destinationProcess, data, roundNumber);
 
         flag = false;
         notify();
@@ -48,8 +48,8 @@ public class Channel<T> {
 
     public interface OnMessage<T> {
 
-        void onSend(int processNumber, T data, int roundNumber);
+        void onSend(int sourceProcess, int destinationProcess, T data, int roundNumber);
 
-        void onReceive(int processNumber, T data, int roundNumber);
+        void onReceive(int sourceProcess, int destinationProcess, T data, int roundNumber);
     }
 }

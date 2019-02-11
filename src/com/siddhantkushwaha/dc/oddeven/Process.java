@@ -42,19 +42,20 @@ public class Process<T> implements Runnable {
             if (val == 0 || val == 3) {
                 if (channels[2] != null) {
 
-                    channels[2].send(processNumber, data, roundNumber);
-                    data = channels[3].receive(processNumber, roundNumber);
+                    channels[2].send(processNumber, processNumber + 1, data, roundNumber);
+                    data = channels[3].receive(processNumber, processNumber + 1, roundNumber);
                 }
             } else {
                 if (channels[0] != null) {
 
-                    T newData = channels[0].receive(processNumber, roundNumber);
+                    T newData = channels[0].receive(processNumber, processNumber - 1, roundNumber);
                     if (comparator.compare(data, newData)) {
                         T oldData = data;
                         data = newData;
-                        channels[1].send(processNumber, oldData, roundNumber);
+                        channels[1].send(processNumber, processNumber - 1, oldData, roundNumber);
                     } else
-                        channels[1].send(processNumber, newData, roundNumber); }
+                        channels[1].send(processNumber, processNumber - 1, newData, roundNumber);
+                }
             }
 
             roundNumber++;
