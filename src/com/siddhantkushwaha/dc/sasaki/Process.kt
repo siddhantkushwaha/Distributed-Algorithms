@@ -22,11 +22,11 @@ class Process<T>(data: T, mark: Int, private val processNumber: Int, private val
             0 -> {
                 data1 = Data()
                 data1?.data = data
-                data1?.marked = true
+                data1?.marked = false
 
                 data2 = Data()
                 data2?.data = data
-                data2?.marked = true
+                data2?.marked = false
             }
 
             1 -> {

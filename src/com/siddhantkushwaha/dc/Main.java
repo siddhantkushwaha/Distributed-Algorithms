@@ -54,6 +54,13 @@ public class Main {
                             break;
                     }
                 }
+
+                System.out.println("Initial Elements - ");
+                for (Integer a : arr)
+                    System.out.printf("%d ", a);
+                System.out.println("\n");
+
+                System.out.println("Starting..\n");
                 callMethod(choice, arr, order.equals("d"), pr.equals("y"), sr.equals("y"));
                 break;
             default:

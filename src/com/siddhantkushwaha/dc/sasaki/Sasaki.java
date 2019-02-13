@@ -77,7 +77,6 @@ public class Sasaki {
             processes[i] = new Process<Integer>(arr[i], mark, i + 1, n, _channels, comparator, processOutput);
         }
 
-        System.out.println("Starting..");
         for (Process process : processes) {
             process.start();
         }

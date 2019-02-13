@@ -66,7 +66,6 @@ public class Modulo3 {
             processes[i] = new Process<Integer>(arr[i], i + 1, n, _channels, comparator, processOutput);
         }
 
-        System.out.println("Starting..");
         for (Process process : processes)
             process.start();
     }
