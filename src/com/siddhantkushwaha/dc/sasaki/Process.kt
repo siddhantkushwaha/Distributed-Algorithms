@@ -4,6 +4,12 @@ import com.siddhantkushwaha.dc.Channel
 import com.siddhantkushwaha.dc.Comparator
 import com.siddhantkushwaha.dc.ProcessOutput
 
+/*
+    This class represents a typical process in Sasaki's, how it executes.
+    This class implements runnable since each instance of this class needs to
+    run on a different thread for parallel execution.
+*/
+
 class Process<T>(data: T, mark: Int, private val processNumber: Int, private val n: Int, private val channels: Array<Channel<Data<T>?>?>, private val comparator: Comparator<T>, private val processOutput: ProcessOutput<T>) : Runnable {
 
     private var data1: Data<T>? = null
@@ -12,6 +18,8 @@ class Process<T>(data: T, mark: Int, private val processNumber: Int, private val
     private var area: Int = 0
 
     init {
+
+        /* Assigning the data values based on the position */
         when (mark) {
             -1 -> {
                 data2 = Data()
@@ -38,6 +46,8 @@ class Process<T>(data: T, mark: Int, private val processNumber: Int, private val
     }
 
     fun start() {
+
+        /* The below line calls the run method defined below on a new thread */
         Thread(this@Process, "P$processNumber").start()
     }
 
@@ -45,9 +55,12 @@ class Process<T>(data: T, mark: Int, private val processNumber: Int, private val
 
         for (roundNumber in 1 until n) {
 
+
+            /* both send and receive on either of the sockets happen parallel to each other so they are executed on two different threads */
             var t1: Thread? = null
             var t2: Thread? = null
 
+            /* wait for receive on the left-socket if it's not null */
             if (data1 != null) {
                 t1 = Thread(Runnable {
 
@@ -71,6 +84,7 @@ class Process<T>(data: T, mark: Int, private val processNumber: Int, private val
                 t1.start()
             }
 
+            /* send data available on the right socket if it's not null */
             if (data2 != null) {
                 t2 = Thread(Runnable {
 
@@ -81,9 +95,11 @@ class Process<T>(data: T, mark: Int, private val processNumber: Int, private val
                 t2.start()
             }
 
+            /* wait for both the sockets to receive and send data respectively*/
             t1?.join()
             t2?.join()
 
+            /* swap data if needed */
             if (comparator.compare(data2?.data ?: continue, data1?.data ?: continue)) {
                 val temp = data1
                 data1 = data2

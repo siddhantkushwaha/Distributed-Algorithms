@@ -1,5 +1,11 @@
 package com.siddhantkushwaha.dc.modulo3
 
+/*
+    This class represents a typical process in an alternative n-1 rounds algorithm, also called Modulo3 algorithm, how it executes.
+    This class implements runnable since each instance of this class needs to
+    run on a different thread for parallel execution.
+*/
+
 import com.siddhantkushwaha.dc.Channel
 import com.siddhantkushwaha.dc.Comparator
 import com.siddhantkushwaha.dc.ProcessOutput
@@ -14,6 +20,8 @@ class Process<T>(private var data: T, private val processNumber: Int, private va
 
 
     fun start() {
+
+        /* The below line calls the run method defined below on a new thread */
         Thread(this@Process, "P$processNumber").start()
     }
 
@@ -22,9 +30,11 @@ class Process<T>(private var data: T, private val processNumber: Int, private va
         var idx = processNumber
         for (roundNumber in 1 until n) {
             idx %= 3
+
+            /* defining a task based on the index */
             when (idx) {
 
-
+                /* when the process is a right process */
                 0 -> {
                     if (leftSendChannel != null)
                         leftSendChannel.send(processNumber, processNumber - 1, data, roundNumber)
@@ -33,6 +43,7 @@ class Process<T>(private var data: T, private val processNumber: Int, private va
                         data = leftReceiveChannel.receive(processNumber, processNumber - 1, roundNumber)!!
                 }
 
+                /* when the process is a left process */
                 1 -> {
                     if (rightSendChannel != null)
                         rightSendChannel.send(processNumber, processNumber + 1, data, roundNumber)
@@ -41,10 +52,13 @@ class Process<T>(private var data: T, private val processNumber: Int, private va
                         data = rightReceiveChannel.receive(processNumber, processNumber + 1, roundNumber)!!
                 }
 
+
+                /* when the process is a middle process */
                 2 -> {
                     val dataArr = ArrayList<T>()
                     dataArr.add(data)
 
+                    /* since we need to receive from two ends simultaneously, we run these tasks on two different threads */
                     var t1: Thread? = null
                     var t2: Thread? = null
 
@@ -62,9 +76,11 @@ class Process<T>(private var data: T, private val processNumber: Int, private va
                         t2.start()
                     }
 
+                    /* wait for receive from both ends */
                     t1?.join()
                     t2?.join()
 
+                    /* sort based on comparator */
                     dataArr.sortWith(kotlin.Comparator { o1, o2 ->
                         if (comparator.compare(o1, o2))
                             -1
@@ -78,6 +94,7 @@ class Process<T>(private var data: T, private val processNumber: Int, private va
 
                             data = dataArr[1]!!
 
+                            /* since we need to send back to two ends simultaneously, we run these tasks on two different threads */
                             val t3 = Thread(Runnable {
                                 leftSendChannel.send(processNumber, processNumber - 1, dataArr[0]!!, roundNumber)
                             }, "P$processNumber-3")
@@ -114,6 +131,5 @@ class Process<T>(private var data: T, private val processNumber: Int, private va
         }
 
         processOutput.onFinish(processNumber, data, data, 0, n - 1)
-        // println("Process-$processNumber -> $data")
     }
 }
