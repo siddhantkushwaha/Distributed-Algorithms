@@ -15,7 +15,7 @@ A **jar** file is available, which can b run like so -
 
     java -jar filename.jar
 
-In this case the file name being 'DistributedSortingAlgorithms.jar'.
+In this case the file name being 'DistributedAlgorithms.jar'.
 
 ## Requirements
 
